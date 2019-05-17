@@ -72,6 +72,9 @@
                                         <div class="form-group tm-form-element tm-form-element-2">
                                             <select name="formSelect" class="form-control" id="formSelect">
                                                 <option value="SimpleEgo">SimpleEgo</option>
+                                                <option value="SimpleEgoWithMortalityExperimentManager">SimpleEgoWithMortalityExperimentManager</option>
+                                                <option value="AltrExperimentManager">AltrExperimentManager</option>
+                                                <option value="AltrWithMortalityExperimentManager">AltrWithMortalityExperimentManager</option>
                                             </select>
                                         </div>
                                         <div class="form-group tm-form-element tm-form-element-2">
@@ -101,8 +104,8 @@
                                                 <button type="submit" id="saveResultButton1" disabled="true" class="btn btn-primary tm-btn-search">Save Result</button>
                                             </div>
                                         </div>
-                                        <div id="buttons2">
-                                            <!--<div class="form-row tm-search-form-row" id="buttons">-->
+                                        <!--<div id="buttons2">
+
                                             <div id="runButtonDiv2">
                                                 <button type="submit" id="runButton2" class="btn btn-primary tm-btn-search">Run</button>
                                             </div>
@@ -119,7 +122,7 @@
                                             </div>
                                         </div>
                                         <div id="buttons3">
-                                            <!--<div class="form-row tm-search-form-row" id="buttons">-->
+
                                             <div id="runButtonDiv3">
                                                 <button type="submit" id="runButton3" class="btn btn-primary tm-btn-search">Run</button>
                                             </div>
@@ -136,7 +139,7 @@
                                             </div>
                                         </div>
                                         <div id="buttons4">
-                                            <!--<div class="form-row tm-search-form-row" id="buttons">-->
+
                                             <div id="runButtonDiv4">
                                                 <button type="submit" id="runButton4" class="btn btn-primary tm-btn-search">Run</button>
                                             </div>
@@ -151,7 +154,7 @@
                                             <div id="saveResultButtonDiv4">
                                                 <button type="submit" id="saveResultButton4" disabled="true" class="btn btn-primary tm-btn-search">Save Result</button>
                                             </div>
-                                        </div>
+                                        </div>-->
                                     </div>
                                 </form>
                             </div>
@@ -294,7 +297,18 @@
 
         <script>
             $('#formSelectButton').click(function () {
-                var msg = "formFileName=" + formFilesLocation + "SimpleEgo.json";
+                var msg;
+
+                if (document.getElementById("formSelect").selectedIndex == 0) {
+                    msg = "formFileName=" + formFilesLocation + "SimpleEgo.json";
+                } else if (document.getElementById("formSelect").selectedIndex == 1) {
+                    msg = "formFileName=" + formFilesLocation + "SimpleEgoWithMortality.json";
+                } else if (document.getElementById("formSelect").selectedIndex == 2) {
+                    msg = "formFileName=" + formFilesLocation + "AltrExperiment.json";
+                } else if (document.getElementById("formSelect").selectedIndex == 3) {
+                    msg = "formFileName=" + formFilesLocation + "AltrExperimentWithMortality.json";
+                }
+
                 $.ajax({
                     type: 'GET',
                     url: 'http://localhost:8080/ViseFrontEnd_war_exploded/resource/formbuilder/form',
@@ -355,10 +369,11 @@
 
              $('#runButton1').click(function () {
                  inProgress[0] = true;
-                 callPercentage("experiment1", "bar1", 1);
                  runExperiment("experiment1", 1);
+                 callPercentage("experiment1", "bar1", 1);
                  disactivateButtons(1);
              })
+             /*
              $('#runButton2').click(function () {
                  inProgress[1] = true;
                  callPercentage("experiment2", "bar2", 2);
@@ -377,6 +392,7 @@
                  runExperiment("experiment4", 4);
                  disactivateButtons(4);
              })
+             */
              $('#showResultButton1').click(function() {
                  window.open(
                      'http://localhost:8080/ViseFrontEnd_war_exploded/CSS%20HTML%20Template/result.html?' +
@@ -384,6 +400,7 @@
                      '_blank'
                  );
              });
+             /*
              $('#showResultButton2').click(function() {
                  window.open(
                      'http://localhost:8080/ViseFrontEnd_war_exploded/CSS%20HTML%20Template/result.html?' +
@@ -405,11 +422,13 @@
                      '_blank'
                  );
              });
+             */
              $('#saveResultButton1').click(function() {
 
                  saveTextAsFile("data_for_csv=" + JSON.stringify(results[0]));
 
              });
+             /*
              $('#saveResultButton2').click(function() {
                  saveTextAsFile("data_for_csv=" + JSON.stringify(results[1]));
              });
@@ -419,6 +438,7 @@
              $('#saveResultButton4').click(function() {
                  saveTextAsFile("data_for_csv=" + JSON.stringify(results[3]));
              });
+             */
              function disactivateButtons(number) {
                  document.getElementById('showResultButton' + number).disabled = true;
                  document.getElementById('saveResultButton' + number).disabled = true;
@@ -430,7 +450,7 @@
         </script>
 
         <script>
-            function callPercentage() {
+            /*function callPercentage() {
                 var elem = document.getElementById("myBar");
                 var id = setInterval(frame, 100);
                 var reset = 0;
@@ -453,7 +473,7 @@
                         dataType: "json"
                     });
                 }
-            }
+            } */
             function callPercentage(experimentId, progressBarId, experimentNumber) {
                 var elem = document.getElementById(progressBarId);
                 var id = setInterval(frame, 100);
@@ -466,9 +486,10 @@
                         success: function(data) {
                             elem.style.width = data * 100 + '%';
 //                            elem.innerHTML = Math.round(data * 100) + '%';
-                            elem.innerHTML = "<div id=\"barPercent\">" + Math.round(data * 100) + '%' + "</div>";
+                            elem.innerHTML = "<div id=\"barPercent\">" + data +  "</div>";
+                            //elem.innerHTML = "<div id=\"barPercent\">" + Math.round(data * 100) + '%' + "</div>";
 
-                            if (data >= 1) reset++;
+                            if (data >= 1.0) reset++;
 //                            if (reset >= 5) {
                             if (!inProgress[experimentNumber - 1]) {
 //                                elem.style.width = 1 + '%';
@@ -497,6 +518,8 @@
 //                        drawResult(data);
                         inProgress[experimentNumber - 1] = false;
                         activateButtons(experimentNumber);
+                        console.log('#someButton was clicked');
+                        alert('Расчет окончен для  ' + experimentNumber);
 
                     },
                     error: function (xhr, str) {

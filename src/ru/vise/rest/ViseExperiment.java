@@ -11,7 +11,7 @@ public class ViseExperiment {
     // The Java method will produce content identified by the MIME Media type "text/plain"
     @Produces("text/plain")
     @Path("/run")
-    public String getClichedMessage(@QueryParam("test") Integer test, @QueryParam("q") String q,
+    public String getClichedMessage(@QueryParam("formSelect") String formSelect, @QueryParam("test") Integer test, @QueryParam("q") String q,
                                     @QueryParam("capital") Double capital,
                                     @QueryParam("mu") Double mu,
                                     @QueryParam("sigma") Double sigma,
@@ -26,15 +26,27 @@ public class ViseExperiment {
                                     @QueryParam("finish") Integer finish,
                                     @QueryParam("step")Integer step,
                                     @QueryParam("multiple") Double multiple,
-                                    @QueryParam("experimentId") String experimentId) {
+                                    @QueryParam("experimentId") String experimentId,
+                                    @QueryParam("leftBound") Double leftBound,
+                                    @QueryParam("rightBound") Double rightBound) {
         // Return some cliched textual content
-        String json = new Gson().toJson(BackEnd.runSimpleEgo(capital, distrib, mu, sigma,
-                k, iteration, stepNumber, peopleCount,
-                majorityThreshold, start, finish, step, var, experimentId));
+        String json;
+        if (leftBound != null) {
+            json = new Gson().toJson(BackEnd.runExperiment(formSelect, capital, distrib, mu, sigma,
+                    k, iteration, stepNumber, peopleCount,
+                    majorityThreshold, start, finish, step, var, experimentId, leftBound, rightBound));
+            return json;
+        } else {
+            json = new Gson().toJson(BackEnd.runExperiment(formSelect, capital, distrib, mu, sigma,
+                    k, iteration, stepNumber, peopleCount,
+                    majorityThreshold, start, finish, step, var, experimentId, 0, 0));
+            return json;
+        }
+
 //        String json = new Gson().toJson(BackEnd.runSimpleEgo(capital, distrib, mu, sigma,
 //                k, iteration, stepNumber, peopleCount,
 //                majorityThreshold, start, finish, step, var));
-        return json;
+
     }
     @GET
     @Path("/percentage")
