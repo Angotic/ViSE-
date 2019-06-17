@@ -48,7 +48,7 @@ public class CSVwriter {
                 writer.newLine();
             } else {
                 for (int j = 0; j < keys.size(); j++) {
-                    writer.value(Double.toString(mapData.get(array[j])[i]));
+                    writer.value(Double.toString(mapData.get(array[j])[i]).replaceAll("\\.", ","));
                 }
                 writer.newLine();
             }
